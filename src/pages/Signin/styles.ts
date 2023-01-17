@@ -1,5 +1,15 @@
 import styled from "styled-components";
 
+export const Main = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 export const Container = styled.div`
   width: 100%;
   height: 100vh;
@@ -18,7 +28,7 @@ export const Container = styled.div`
   }
 `;
 
-export const Content = styled.div`
+export const Content = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -87,6 +97,13 @@ export const Button = styled.button`
 
     transition: background-color 125ms;
   }
+
+  transition: opacity 125ms;
+
+  :disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
 `;
 
 export const CreateAccount = styled.div`
@@ -100,4 +117,9 @@ export const CreateAccount = styled.div`
       text-decoration: none;
     }
   }
+`;
+
+export const Error = styled.span`
+  color: red;
+  align-self: center;
 `;
