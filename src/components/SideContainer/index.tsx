@@ -1,9 +1,9 @@
-import * as S from "./styles";
 import { CaretDown } from "phosphor-react";
+import { useLocation } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 
 import ImageSideContainer from "../../assets/image.png";
-import { useLocation } from "react-router-dom";
+import * as S from "./styles";
 
 export function SideContainer() {
   const path = useLocation();

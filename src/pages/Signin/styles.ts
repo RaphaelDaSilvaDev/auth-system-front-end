@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Main = styled.div`
   width: 100%;
@@ -57,7 +57,11 @@ export const Content = styled.form`
   }
 `;
 
-export const InputContent = styled.div`
+interface hasError {
+  hasError: boolean;
+}
+
+export const InputContent = styled.div<hasError>`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -73,36 +77,15 @@ export const InputContent = styled.div`
     border-radius: 20px;
     border: none;
 
+    ${(props) =>
+      props.hasError &&
+      css`
+        box-shadow: 0 0 0 2px ${(props) => props.theme["red-300"]};
+      `}
+
     ::placeholder {
       color: ${(props) => props.theme["black-half"]};
     }
-  }
-`;
-
-export const Button = styled.button`
-  align-self: center;
-  width: 100%;
-  max-width: 34rem;
-  height: 6rem;
-  background-color: ${(props) => props.theme["yellow-100"]};
-  font-size: 2.6rem;
-
-  border-radius: 20px;
-  border: none;
-  outline: none;
-
-  :hover {
-    cursor: pointer;
-    background-color: ${(props) => props.theme["yellow-300"]};
-
-    transition: background-color 125ms;
-  }
-
-  transition: opacity 125ms;
-
-  :disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
   }
 `;
 

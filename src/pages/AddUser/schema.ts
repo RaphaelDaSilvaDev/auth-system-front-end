@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const SigninSchema = z.object({
+export const CreateAccountSchema = z.object({
   name: z.string().nonempty({ message: "The name field is required!" }),
   email: z
     .string()
@@ -10,6 +10,7 @@ export const SigninSchema = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters long!" })
     .nonempty({ message: "The password field is required!" }),
+  isAdmin: z.boolean().optional(),
 });
 
-export type SigninSchemaType = z.infer<typeof SigninSchema>;
+export type CreateAccountSchemaType = z.infer<typeof CreateAccountSchema>;

@@ -1,20 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Button } from "../../components/Button";
+import { ToastStyle } from "../../components/Toast";
+import { SideComponentLayout } from "../../layout/SideComponentLayout";
 
 import { AuthToken } from "../../services/authToken";
 import { api } from "../../services/axios";
-
-import { SideComponentLayout } from "../../layout/SideComponentLayout";
+import { loginSchema, loginSchemaType } from "./schema";
 
 import * as S from "./styles";
-import { loginSchema, loginSchemaType } from "./schema";
 
 export function Login() {
   const navigation = useNavigate();
+
+  const [loadingButton, setLoadingButton] = useState<boolean>(false);
 
   const {
     register,
@@ -33,6 +39,7 @@ export function Login() {
   const [cookies, setCookies] = useCookies(["user"]);
 
   async function handleLogin() {
+    setLoadingButton(true);
     const email = watch("email");
     const password = watch("password");
     const body = {
@@ -49,11 +56,24 @@ export function Login() {
         navigation("/");
       }
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        console.log(error.message);
+        ToastStyle({ message: error.response?.data.message, styleToast: "error" });
+      }
+    } finally {
+      setLoadingButton(false);
     }
   }
 
-  const disabledButton = !isDirty || !isValid;
+  useEffect(() => {
+    const values = Object.values(errors);
+    values.map((value) => {
+      ToastStyle({
+        message: value.message ? value.message : "Fill in all fields!",
+        styleToast: "warning",
+      });
+    });
+  }, [errors]);
 
   return (
     <S.Main>
@@ -61,18 +81,22 @@ export function Login() {
       <S.Container id="content">
         <S.Content onSubmit={handleSubmit(handleLogin)}>
           <h1>Login with your Account</h1>
-          <S.InputContent>
+          <S.InputContent hasError={errors.email?.message ? true : false}>
             <label htmlFor="email">Email</label>
-            <input {...register("email")} placeholder="Enter your email" />
-            {errors.email?.message && <S.Error>{errors.email.message}</S.Error>}
+            <input {...register("email")} id="email" placeholder="Enter your email" />
           </S.InputContent>
 
-          <S.InputContent>
+          <S.InputContent hasError={errors.password?.message ? true : false}>
             <label htmlFor="password">Password</label>
-            <input {...register("password")} type="password" placeholder="Enter your password" />
+            <input
+              {...register("password")}
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+            />
           </S.InputContent>
 
-          <S.Button disabled={disabledButton}>Login</S.Button>
+          <Button text="Login" loading={loadingButton} />
 
           <S.CreateAccount>
             <span>

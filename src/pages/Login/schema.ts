@@ -4,9 +4,9 @@ export const loginSchema = z
   .object({
     email: z
       .string()
-      .email({ message: "Digite um email válido!" })
-      .nonempty({ message: "Este campo é obrigatório" }),
-    password: z.string().nonempty({ message: "Este campo é obrigatório" }),
+      .email({ message: "Enter a valid email!" })
+      .nonempty({ message: "The email field is required!" }),
+    password: z.string().nonempty({ message: "The password field is required!" }),
   })
   .required({
     email: true,

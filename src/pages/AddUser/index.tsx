@@ -1,66 +1,55 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { Wrapper } from "../../layout/Wrapper";
 import { Button } from "../../components/Button";
 import { ToastStyle } from "../../components/Toast";
-import { SideComponentLayout } from "../../layout/SideComponentLayout";
 
 import { api } from "../../services/axios";
-import { AuthToken } from "../../services/authToken";
-import { SigninSchema, SigninSchemaType } from "./schema";
+import { CreateAccountSchemaType, CreateAccountSchema } from "./schema";
 
 import * as S from "./styles";
 
-export function Signin() {
-  const navigation = useNavigate();
-
+export function AddUser() {
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
 
   const {
     register,
     watch,
     handleSubmit,
-    formState: { errors, isDirty, isValid },
-  } = useForm<SigninSchemaType>({
-    resolver: zodResolver(SigninSchema),
+    reset,
+    formState: { errors },
+  } = useForm<CreateAccountSchemaType>({
+    resolver: zodResolver(CreateAccountSchema),
     mode: "onSubmit",
-    defaultValues: {
-      email: "",
-      name: "",
-      password: "",
-    },
   });
 
-  const [cookies, setCookies] = useCookies(["user"]);
-
-  async function handleOnSignin() {
+  async function handleOnCreateUser() {
     setLoadingButton(true);
     const name = watch("name");
     const email = watch("email");
     const password = watch("password");
+    const isAdmin = watch("isAdmin");
 
-    const body = {
+    const payload = {
       name,
       email,
       password,
+      isAdmin,
     };
 
     try {
-      const response = await api.post("/user", body);
-      if (response.status === 201) {
-        const { data } = response;
-        setCookies("user", data, { path: "/" });
-        AuthToken(data.token);
-        navigation("/");
+      const { status, data } = await api.post("/user/admin", payload);
+      if (status === 400) {
+        ToastStyle({ message: data.message, styleToast: "error" });
       }
+      ToastStyle({ message: "Successfully created User!", styleToast: "success" });
+      reset();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log(error.message);
         ToastStyle({ message: error.response?.data.message, styleToast: "error" });
       }
     } finally {
@@ -70,6 +59,7 @@ export function Signin() {
 
   useEffect(() => {
     const values = Object.values(errors);
+
     values.map((value) => {
       ToastStyle({
         message: value.message ? value.message : "Fill in all fields!",
@@ -79,15 +69,19 @@ export function Signin() {
   }, [errors]);
 
   return (
-    <S.Main>
-      <SideComponentLayout />
-      <S.Container id="content">
-        <S.Content onSubmit={handleSubmit(handleOnSignin)}>
-          <h1>Create your free account</h1>
+    <S.Container>
+      <Wrapper>
+        <S.Content onSubmit={handleSubmit(handleOnCreateUser)}>
+          <h1>Create a new account</h1>
 
           <S.InputContent hasError={errors.name?.message ? true : false}>
             <label htmlFor="fullname">Full name</label>
-            <input id="fullname" placeholder="Enter your full name" {...register("name")} />
+            <input
+              id="fullname"
+              placeholder="Enter your full name"
+              {...register("name")}
+              aria-invalid={errors.name ? "true" : "false"}
+            />
           </S.InputContent>
 
           <S.InputContent hasError={errors.email?.message ? true : false}>
@@ -105,15 +99,17 @@ export function Signin() {
             />
           </S.InputContent>
 
-          <Button loading={loadingButton} text="Create Account" />
+          <S.CheckBoxContent>
+            <label htmlFor="isAdmin">
+              User Admin
+              <input type="checkbox" id="isAdmin" {...register("isAdmin")} />
+              <span className="checkmark"></span>
+            </label>
+          </S.CheckBoxContent>
 
-          <S.CreateAccount>
-            <span>
-              Already have an account? <Link to="/login">Log in</Link>
-            </span>
-          </S.CreateAccount>
+          <Button text="Create Account" loading={loadingButton} />
         </S.Content>
-      </S.Container>
-    </S.Main>
+      </Wrapper>
+    </S.Container>
   );
 }
