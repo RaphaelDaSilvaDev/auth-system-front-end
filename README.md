@@ -19,7 +19,7 @@
 
 ---
 
-- Esta aplicação depende do back end e do banco de dados que podem ser encontrados <a href="https://github.com/RaphaelDaSilvaDev/auth-system-back-end/edit">nesse repositório</a>
+- Esta aplicação depende do back end e do banco de dados que podem ser encontrados <a href="https://github.com/RaphaelDaSilvaDev/auth-system-back-end">nesse repositório</a>
 
 ## Para rodar a aplicação
 ```shell
