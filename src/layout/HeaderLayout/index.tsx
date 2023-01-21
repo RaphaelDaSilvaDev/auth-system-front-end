@@ -1,13 +1,13 @@
 import { Outlet } from "react-router-dom";
 
-import { SideContainer } from "../../components/SideContainer";
+import { Header } from "../../components/Header";
 
 import * as S from "./styles";
 
-export function SideComponentLayout() {
+export function HeaderLayout() {
   return (
     <S.LayoutContainer>
-      <SideContainer />
+      <Header />
       <Outlet />
     </S.LayoutContainer>
   );

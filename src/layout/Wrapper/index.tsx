@@ -1,6 +1,9 @@
-import React from "react";
 import * as S from "./styles";
 
-export function Wrapper(children: React.ReactElement) {
+interface WrapperProps {
+  children: JSX.Element;
+}
+
+export function Wrapper({ children }: WrapperProps) {
   return <S.WrapperContainer>{children}</S.WrapperContainer>;
 }
